@@ -1,0 +1,78 @@
+html {
+  box-sizing: border-box;
+  scroll-behavior: smooth;
+}
+
+*,
+*::after,
+*::before {
+  box-sizing: inherit;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --fonts-family: 'Courier New', Courier, monospace;
+}
+
+body {
+  margin: 0 auto;
+  background: linear-gradient(to bottom right, rgba(104, 129, 158, 0.596), rgba(36, 63, 96, 0.651), rgba(59, 69, 0, 0.6));
+  max-height: 100vh;
+  height: 100vh;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: calc(20rem / 16);
+}
+
+h1 {
+  text-align: center;
+  font-size: 1.8em;
+  padding: 0.7em;
+}
+
+.write {
+  margin: 0 auto 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 60%;
+  height: 30%;
+  text-align: left;
+}
+
+#output {
+  width: 100%;
+  height: 100%;
+  padding: 12px 20px;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  background-color: #f8f8f8;
+  font-size: 18px;
+}
+
+.keyboard {
+  margin: 4rem 0 0;
+  display: grid;
+  align-content: center;
+  justify-content: center;
+  grid-template-columns: 100%;
+  grid-template-rows: repeat(5, 1fr);
+  row-gap: 1rem;
+  column-gap: 0.5rem;
+  width: 80%;
+  height: 60%;
+  margin: 0 auto;
+  background: #c9c3c3;
+}
+
+.row0 {
+  display: grid;
+  grid-template-columns: repeat(13, 6.7%) 13%;
+  height: 3em;
+  margin: 0.2em;
+  border-radius: 5px;
+}
+
+.key {
+  border: 1px solid rgb(75, 72, 72);
+}
