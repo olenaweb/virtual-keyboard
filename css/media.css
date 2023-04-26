@@ -6,12 +6,11 @@
   .write {
     margin: 0 auto 2rem;
     width: 60%;
-    /* height: 25%; */
-    height: 30vh;
+    height: 25vh;
 
   }
 
-  #output {
+  .output {
     font-size: 30px;
   }
 
@@ -34,11 +33,10 @@
   .write {
     margin: 0 auto 2rem;
     width: 80%;
-    /* height: 25%; */
     height: 25vh;
   }
 
-  #output {
+  .output {
     font-size: 24px;
   }
 
