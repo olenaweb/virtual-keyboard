@@ -1,0 +1,56 @@
+@media screen and (max-width: 1400px) {
+  html {
+    font-size: 14px;
+  }
+
+  .write {
+    margin: 0 auto 2rem;
+    width: 60%;
+    height: 25vh;
+
+  }
+
+  .output {
+    font-size: 30px;
+  }
+
+  .keyboard {
+    column-gap: 0.5rem;
+    width: 80%;
+  }
+
+  .keyboard-row {
+    height: 1.5em;
+    margin: 0.2em;
+  }
+}
+
+@media screen and (max-width: 850px) {
+  html {
+    font-size: 12px;
+  }
+
+  .write {
+    margin: 0 auto 2rem;
+    width: 80%;
+    height: 25vh;
+  }
+
+  .output {
+    font-size: 24px;
+  }
+
+  .keyboard {
+    column-gap: 0.5rem;
+    width: 90%;
+  }
+
+  .keyboard-row {
+    height: 1.5em;
+    margin: 0.2em;
+  }
+
+  .key {
+    margin: 0 2px 0;
+  }
+}
