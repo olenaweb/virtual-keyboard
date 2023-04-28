@@ -6,7 +6,10 @@ console.log(' keyData= ', keyData);
 // })
 
 class Keyboard {
-  language;
+  language = 'ru';
+  pressControl = false;
+  pressAlt = false;
+  keyboard;
   constructor() {
     if (localStorage.getItem('lang') == 'ru') {
       this.language = 'ru';
@@ -21,7 +24,6 @@ class Keyboard {
     this.title.textContent = 'RSS Virtual Keyboard';
     this.write = document.createElement('div');
     this.write.classList.add("write");
-    console.log(' this.title= ', this.title);
 
     this.textArea = document.createElement('textarea');
     this.textArea.classList.add("output");
@@ -77,6 +79,12 @@ class Keyboard {
     document.body.append(this.write);
     document.body.append(this.keyboard);
     document.body.append(this.repl);
+
+    document.addEventListener('keydown', this.keyDown);
+    document.addEventListener('keyup', this.keyUp);
+    this.keyboard.addEventListener('mousedown', this.mouseDown);
+    this.keyboard.addEventListener('mouseup', this.mouseUp);
+    console.log('this.keyboard = ', this.keyboard);
   }
 
   addEnRow() {
@@ -129,7 +137,24 @@ class Keyboard {
   createKey(item) {
     let element = document.createElement('div');
     element.classList.add("key");
-    element.setAttribute("data-class", "input");
+    if (item.value == "Backspace" ||
+      item.value == "Tab" ||
+      item.value == "Delete" ||
+      item.value == "CapsLock" ||
+      item.value == "Enter" ||
+      item.value == "Shift" ||
+      item.value == "⇧" ||
+      item.value == "Ctrl" ||
+      item.value == "Alt" ||
+      item.value == "Win" ||
+      item.value == " " ||
+      item.value == "⇦" ||
+      item.value == "⇩" ||
+      item.value == "⇨") {
+      element.setAttribute("data-class", "special")
+    } else {
+      element.setAttribute("data-class", "input");
+    }
     element.setAttribute("data-key", item.value);
     element.setAttribute("data-shift", item.shift);
     element.setAttribute("data-code", item.code);
@@ -138,12 +163,94 @@ class Keyboard {
     element.append(span);
     return element;
   }
+
+  activate() {
+    this.write.focus();
+    this.write.addEventListener('blur', () => {
+      this.write.focus();
+    });
+
+    this.textArea.addEventListener("keydown", function (event) {
+      if (event.code == "Enter") console.log('event.code == Enter');
+    })
+
+  }
+
+  keyDown(event) {
+    // console.log(event); 
+    // console.log(event.type);
+    console.log(event.key);
+    console.log(event.code);
+    if (event.type === 'keydown') event.preventDefault();
+    // ------------New Lang------------
+    if (event.code == "ControlLeft") this.pressControl = true;
+    if (event.code == "AltLeft") this.pressAlt = true;
+    if (this.pressControl && this.pressAlt) {
+      if (this.language == 'en') {
+        this.language = 'ru'
+      } else {
+        this.language = 'en'
+      };
+      localStorage.setItem('lang', this.language);
+      this.pressControl = false;
+      this.pressAlt = false;
+      updateKeys(this.language);
+      lightKey("ControlLeft");
+      lightKey("AltLeft");
+    } else {
+      lightKey(event.code);
+    }
+  }
+
+  keyUp(event) {
+    lightKey(event.code);
+  }
+
+  mouseDown(event) {
+
+  }
+  // ------------end of class---------
+}
+// let changKeys = document.querySelectorAll(".key")
+
+function updateKeys(lang) {
+  let changKeys = document.querySelectorAll(".key");
+  console.log('lang = ', lang);
+  if (lang == "en") {
+    changKeys.forEach((item) => {
+      if (item.dataset.class == "input") {
+        const itemCode = item.dataset.code;
+        let index = keyData.en.findIndex(e => e.code === itemCode);
+        if (index !== -1) {
+          item.querySelector('span').textContent = keyData.en[index].value;
+          item.setAttribute("data-key", keyData.en[index].value);
+          item.setAttribute("data-shift", keyData.en[index].shift);
+        }
+      }
+    })
+  } else {
+    changKeys.forEach((item) => {
+      if (item.dataset.class == "input") {
+        const itemCode = item.dataset.code;
+        let index = keyData.ru.findIndex(e => e.code === itemCode);
+        if (index !== -1) {
+          item.querySelector('span').textContent = keyData.ru[index].value;
+          item.setAttribute("data-key", keyData.ru[index].value);
+          item.setAttribute("data-shift", keyData.ru[index].shift);
+        }
+      }
+    })
+  }
 }
 
-
-
-
-
+function lightKey(downkey) {
+  let allKeys = document.querySelectorAll(".key");
+  allKeys.forEach((item) => {
+    if (item.dataset.code == downkey) {
+      item.classList.toggle("down-key");
+    }
+  })
+}
 
 
 
@@ -157,7 +264,12 @@ document.addEventListener("DOMContentLoaded", function () {
   let board = new Keyboard();
   console.log('board = ', board);
   board.init();
+  board.activate();
   size();
+  let lang = localStorage.getItem('lang');
+  updateKeys(lang);
+  console.log('******* board.keyboard= ', board.keyboard);
+
 });
 
 function size() {

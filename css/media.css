@@ -30,6 +30,10 @@
     font-size: 12px;
   }
 
+  h1 {
+    font-size: 1.5rem;
+  }
+
   .write {
     margin: 0 auto 2rem;
     width: 80%;
@@ -52,5 +56,9 @@
 
   .key {
     margin: 0 2px 0;
+  }
+
+  .repl {
+    font-size: 1rem;
   }
 }
