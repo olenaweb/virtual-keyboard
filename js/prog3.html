@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    let pressed = new Set();
+    document.addEventListener('keydown', function (event) {
+      pressed.add(event.code);
+      let codes = ["ControlLeft", "AltLeft"];
+      for (let code of codes) { // все ли клавиши из набора нажаты?
+        if (!pressed.has(code)) {
+          return;
+        }
+      }
+      pressed.clear();
+      (function press() {
+        console.log('ControlLeft", "AltLeft" = ');
+      })();
+    });
+
+    document.addEventListener('keyup', function (event) {
+      pressed.delete(event.code);
+    });
+
+  </script>
+</body>
+
+</html>

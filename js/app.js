@@ -10,6 +10,7 @@ class Keyboard {
   pressControl = false;
   pressAlt = false;
   keyboard;
+  textArea;
   constructor() {
     if (localStorage.getItem('lang') == 'ru') {
       this.language = 'ru';
@@ -82,9 +83,34 @@ class Keyboard {
 
     document.addEventListener('keydown', this.keyDown);
     document.addEventListener('keyup', this.keyUp);
-    this.keyboard.addEventListener('mousedown', this.mouseDown);
-    this.keyboard.addEventListener('mouseup', this.mouseUp);
-    console.log('this.keyboard = ', this.keyboard);
+    // this.keyboard.addEventListener('mousedown', this.mouseDown);
+    // this.keyboard.addEventListener('mouseup', this.mouseUp);
+    this.keyboard.addEventListener('click', (event) => {
+      event.stopImmediatePropagation();
+      if (event.target.tagName != 'SPAN' && event.target.tagName != 'DIV') { return };
+      const pressKey = event.target.tagName;
+      if (pressKey != "DIV" && pressKey != "SPAN") { return };
+      if (pressKey == "SPAN" && event.target.parentElement.dataset.key != undefined) {
+        // console.log(' SPAN event.target.parentElement.dataset.key=', event.target.parentElement.dataset.key);
+        // console.log(' event.target.parentElement.classList.contains(input)= ', event.target.parentElement.dataset.class);
+        if (event.target.parentElement.dataset.class == "input") {
+          this.textArea.value = this.textArea.value + event.target.parentElement.dataset.key;
+        }
+      } else if (pressKey == "DIV" && event.target.parentElement.dataset.key != undefined) {
+        // console.log(' DIV event.target.dataset.key=', event.target.dataset.key);
+        if (event.target.dataset.class == "input") {
+          this.textArea.value = this.textArea.value + event.target.dataset.key;
+        }
+      }
+      // this.keyboard.blur();
+      this.textArea.focus();
+      this.textArea.selectionStart = this.textArea.value.length;
+
+    }, true);
+
+    console.log('***********this.keyboard = ', this.keyboard);
+    console.log('********this.textArea = ', this.textArea);
+
   }
 
   addEnRow() {
@@ -137,20 +163,21 @@ class Keyboard {
   createKey(item) {
     let element = document.createElement('div');
     element.classList.add("key");
+    // item.value == "⇦" ||
+    //  item.value == "⇧" ||
+    //   item.value == "⇩" ||
+    //   item.value == "⇨") 
     if (item.value == "Backspace" ||
       item.value == "Tab" ||
       item.value == "Delete" ||
       item.value == "CapsLock" ||
       item.value == "Enter" ||
       item.value == "Shift" ||
-      item.value == "⇧" ||
       item.value == "Ctrl" ||
       item.value == "Alt" ||
       item.value == "Win" ||
-      item.value == " " ||
-      item.value == "⇦" ||
-      item.value == "⇩" ||
-      item.value == "⇨") {
+      item.value == " "
+    ) {
       element.setAttribute("data-class", "special")
     } else {
       element.setAttribute("data-class", "input");
@@ -179,34 +206,50 @@ class Keyboard {
   keyDown(event) {
     // console.log(event); 
     // console.log(event.type);
+    // event.stopImmediatePropagation();
+    // this.textArea.focus();
+
+    if (event.repeat) return;
     console.log(event.key);
     console.log(event.code);
-    if (event.type === 'keydown') event.preventDefault();
+    // if (event.type === 'keydown') event.preventDefault();
     // ------------New Lang------------
-    if (event.code == "ControlLeft") this.pressControl = true;
-    if (event.code == "AltLeft") this.pressAlt = true;
-    if (this.pressControl && this.pressAlt) {
+    if ((event.code == "AltLeft" && event.ctrlKey) ||
+      (event.code == "ControlLeft" && event.altKey)) {
       if (this.language == 'en') {
         this.language = 'ru'
       } else {
         this.language = 'en'
       };
       localStorage.setItem('lang', this.language);
-      this.pressControl = false;
-      this.pressAlt = false;
+      // this.pressControl = false;
+      // this.pressAlt = false;
       updateKeys(this.language);
-      lightKey("ControlLeft");
-      lightKey("AltLeft");
+      // lightKey("ControlLeft", "AltLeft");
     } else {
       lightKey(event.code);
     }
   }
 
   keyUp(event) {
-    lightKey(event.code);
+    if ((event.code == "AltLeft" && event.ctrlKey) ||
+      (event.code == "ControlLeft" && event.altKey)) {
+      lightKey("ControlLeft", "AltLeft");
+    } else {
+      lightKey(event.code);
+    }
+
   }
 
+
   mouseDown(event) {
+    function pressKey(item) {
+
+      item.setAttribute('data-pressed', 'on');
+      setTimeout(function () {
+        item.removeAttribute('data-pressed');
+      }, 500);
+    }
 
   }
   // ------------end of class---------
@@ -243,16 +286,27 @@ function updateKeys(lang) {
   }
 }
 
-function lightKey(downkey) {
+function lightKey(downkey1, downkey2) {
   let allKeys = document.querySelectorAll(".key");
   allKeys.forEach((item) => {
-    if (item.dataset.code == downkey) {
+    if (item.dataset.code == downkey1 || item.dataset.code == downkey2) {
       item.classList.toggle("down-key");
     }
   })
 }
 
-
+function lightKey1(downkey) {
+  let allKeys = document.querySelectorAll(".key");
+  allKeys.forEach((item) => {
+    if (item.dataset.code == downkey && item.classList.contains("down-key")) {
+      // item.style.background = "#c9c3c3";
+      item.classList.remove("down-key");
+    } else if (item.dataset.code == downkey && !item.classList.contains("down-key")) {
+      // item.style.background = "#dbc607";
+      item.classList.add("down-key");
+    }
+  })
+}
 
 
 
