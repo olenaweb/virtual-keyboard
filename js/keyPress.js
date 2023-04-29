@@ -79,4 +79,58 @@ function checkPhoneKey(key) {
   return (key >= '0' && key <= '9') || key == '+' || key == '(' || key == ')' || key == '-' ||
     key == 'ArrowLeft' || key == 'ArrowRight' || key == 'Delete' || key == 'Backspace';
 }
-{/* <input onkeydown="return checkPhoneKey(event.key)" placeholder="Введите телефон" type="tel"></input> */ }
+// A variable that shows caps lock state:
+
+let isCapsLockOn = false;
+
+document.addEventListener('keydown', function (event) {
+  var caps = event.getModifierState && event.getModifierState('CapsLock');
+  if (isCapsLockOn !== caps) isCapsLockOn = caps;
+});
+
+document.addEventListener('keyup', function (event) {
+  var caps = event.getModifierState && event.getModifierState('CapsLock');
+  if (isCapsLockOn !== caps) isCapsLockOn = caps;
+});
+// ===================================
+function isCapsLockOn(component, event) {
+  let key = event.key;
+  let keyCode = event.keyCode;
+
+  component.lastKeyPressed = key;
+
+  if (key === 'Shift') {
+    component.shift = true;
+  }
+
+  if (key === 'CapsLock') {
+    let newCapsLockState = !component.state.capsLock;
+    component.caps = newCapsLockState;
+    return newCapsLockState;
+  } else {
+    if ((component.lastKeyPressed !== 'Shift' && (key === key.toUpperCase() && (keyCode >= 65 && keyCode <= 90)) && !component.shift) || component.caps) {
+      component.caps = true;
+      return true;
+    } else {
+      component.caps = false;
+      return false;
+    }
+  }
+}
+// --------------------------------------------
+function checkIfCapsLockIsOn(event) {
+  var capsLockIsOn = event.getModifierState("CapsLock");
+  console.log("Caps Lock activated: " + capsLockIsOn);
+}
+// ----------------------------------------------
+let isCapsLockOn = false;
+
+document.addEventListener('keydown', function (event) {
+  var caps = event.getModifierState && event.getModifierState('CapsLock');
+  if (isCapsLockOn !== caps) isCapsLockOn = caps;
+});
+
+document.addEventListener('keyup', function (event) {
+  var caps = event.getModifierState && event.getModifierState('CapsLock');
+  if (isCapsLockOn !== caps) isCapsLockOn = caps;
+});

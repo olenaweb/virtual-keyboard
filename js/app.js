@@ -1,16 +1,23 @@
+/** Virtual KeyBoard */
+"use strict"
+
 import keyData from './keyData.js';
 console.log(' keyData= ', keyData);
 // console.log('keyData.en[0] = ', keyData.en[0], keyData.en[0].code);
 // keyData.en.forEach((item, i) => {
 //   console.log('item i= ', i, item);
 // })
-
 class Keyboard {
   language = 'ru';
   pressControl = false;
   pressAlt = false;
-  keyboard;
-  textArea;
+  keyboard = {};
+  textArea = {};
+  static board = {};
+  static pressShift = false;
+  static pressCapsLock = false;
+  static arrow = ["ArrowLeft", "ArrowUp", "ArrowDown", "ArrowRight"];
+
   constructor() {
     if (localStorage.getItem('lang') == 'ru') {
       this.language = 'ru';
@@ -80,36 +87,35 @@ class Keyboard {
     document.body.append(this.write);
     document.body.append(this.keyboard);
     document.body.append(this.repl);
-
+    Keyboard.board = this.keyboard;
+    // ------------Клавиатура---------------------------
     document.addEventListener('keydown', this.keyDown);
     document.addEventListener('keyup', this.keyUp);
     // this.keyboard.addEventListener('mousedown', this.mouseDown);
     // this.keyboard.addEventListener('mouseup', this.mouseUp);
+    // ----------Экранная клавиатура-------------------
     this.keyboard.addEventListener('click', (event) => {
       event.stopImmediatePropagation();
-      if (event.target.tagName != 'SPAN' && event.target.tagName != 'DIV') { return };
+      if (event.target.tagName != 'SPAN') { return };
       const pressKey = event.target.tagName;
-      if (pressKey != "DIV" && pressKey != "SPAN") { return };
+      console.log('****pressKey = ', pressKey);
+      if (pressKey != "SPAN") { return };
       if (pressKey == "SPAN" && event.target.parentElement.dataset.key != undefined) {
         // console.log(' SPAN event.target.parentElement.dataset.key=', event.target.parentElement.dataset.key);
         // console.log(' event.target.parentElement.classList.contains(input)= ', event.target.parentElement.dataset.class);
         if (event.target.parentElement.dataset.class == "input") {
-          this.textArea.value = this.textArea.value + event.target.parentElement.dataset.key;
-        }
-      } else if (pressKey == "DIV" && event.target.parentElement.dataset.key != undefined) {
-        // console.log(' DIV event.target.dataset.key=', event.target.dataset.key);
-        if (event.target.dataset.class == "input") {
-          this.textArea.value = this.textArea.value + event.target.dataset.key;
+          // this.textArea.value = this.textArea.value + event.target.parentElement.dataset.key;
+          this.textArea.value = this.textArea.value + event.target.textContent;
         }
       }
-      // this.keyboard.blur();
-      this.textArea.focus();
-      this.textArea.selectionStart = this.textArea.value.length;
+      // this.keyboard.blur(); // убрать фокус с клавиатуры
+      // this.textArea.focus(); // фокус на клавиатуру
+      this.textArea.selectionStart = this.textArea.value.length; // курсор - за последний символ value
 
     }, true);
 
-    console.log('***********this.keyboard = ', this.keyboard);
-    console.log('********this.textArea = ', this.textArea);
+    // console.log('***********this.keyboard = ', this.keyboard);
+    // console.log('********this.textArea = ', this.textArea);
 
   }
 
@@ -169,7 +175,7 @@ class Keyboard {
     //   item.value == "⇨") 
     if (item.value == "Backspace" ||
       item.value == "Tab" ||
-      item.value == "Delete" ||
+      item.value == "Del" ||
       item.value == "CapsLock" ||
       item.value == "Enter" ||
       item.value == "Shift" ||
@@ -188,10 +194,13 @@ class Keyboard {
     let span = document.createElement('span');
     span.textContent = item.value;
     element.append(span);
+    if (item.value == "AltLeft") { Keyboard.keyAltLeft = element; }
+    if (item.value == "ControlLeft") { Keyboard.keyCtrlLeft = element; }
     return element;
   }
 
   activate() {
+
     this.write.focus();
     this.write.addEventListener('blur', () => {
       this.write.focus();
@@ -204,15 +213,17 @@ class Keyboard {
   }
 
   keyDown(event) {
-    // console.log(event); 
-    // console.log(event.type);
+    // Клавиатура
+    if (event.repeat) return;
+    console.log(' *********keyDown**********');
+    console.log(event);
+    console.log(event.type);
+    console.log(event.key);
+    console.log(event.code);
     // event.stopImmediatePropagation();
     // this.textArea.focus();
 
-    if (event.repeat) return;
-    console.log(event.key);
-    console.log(event.code);
-    // if (event.type === 'keydown') event.preventDefault();
+    if (event.type === 'keydown') event.preventDefault();
     // ------------New Lang------------
     if ((event.code == "AltLeft" && event.ctrlKey) ||
       (event.code == "ControlLeft" && event.altKey)) {
@@ -222,25 +233,45 @@ class Keyboard {
         this.language = 'en'
       };
       localStorage.setItem('lang', this.language);
-      // this.pressControl = false;
-      // this.pressAlt = false;
-      updateKeys(this.language);
-      // lightKey("ControlLeft", "AltLeft");
+      // ----------Смена раскладки клавиатуры------
+      Keyboard.updateKeys(this.language);
+      Keyboard.lightKey("ControlLeft");
+      Keyboard.lightKey("AltLeft");
     } else {
-      lightKey(event.code);
+      Keyboard.lightKey(event.code);
+    }
+    // ---------Shift----------
+    if (event.key == 'Shift') {
+      Keyboard.pressShift = true;
+      Keyboard.downShift("pressShift");
+    }
+    if (event.key == 'CapsLock') {
+      Keyboard.pressCapsLock = !Keyboard.pressCapsLock;
+      console.log('========== Keyboard.pressCapsLock= ', Keyboard.pressCapsLock);
+      Keyboard.downShift("pressCapsLock");
     }
   }
 
   keyUp(event) {
+    if (event.repeat) return;
+    console.log(' *********keyUP**********');
+    console.log(event);
+    console.log(event.type);
     if ((event.code == "AltLeft" && event.ctrlKey) ||
       (event.code == "ControlLeft" && event.altKey)) {
-      lightKey("ControlLeft", "AltLeft");
+
+      Keyboard.lightKey("ControlLeft");
+      Keyboard.lightKey("AltLeft");
     } else {
-      lightKey(event.code);
+      if (event.code != 'CapsLock') {
+        Keyboard.lightKey(event.code);
+      }
     }
-
+    if (event.key == 'Shift') {
+      Keyboard.pressShift = false;
+      Keyboard.downShift("pressShift");
+    }
   }
-
 
   mouseDown(event) {
     function pressKey(item) {
@@ -252,61 +283,76 @@ class Keyboard {
     }
 
   }
-  // ------------end of class---------
-}
-// let changKeys = document.querySelectorAll(".key")
 
-function updateKeys(lang) {
-  let changKeys = document.querySelectorAll(".key");
-  console.log('lang = ', lang);
-  if (lang == "en") {
-    changKeys.forEach((item) => {
-      if (item.dataset.class == "input") {
-        const itemCode = item.dataset.code;
-        let index = keyData.en.findIndex(e => e.code === itemCode);
-        if (index !== -1) {
-          item.querySelector('span').textContent = keyData.en[index].value;
-          item.setAttribute("data-key", keyData.en[index].value);
-          item.setAttribute("data-shift", keyData.en[index].shift);
-        }
-      }
-    })
-  } else {
-    changKeys.forEach((item) => {
-      if (item.dataset.class == "input") {
-        const itemCode = item.dataset.code;
-        let index = keyData.ru.findIndex(e => e.code === itemCode);
-        if (index !== -1) {
-          item.querySelector('span').textContent = keyData.ru[index].value;
-          item.setAttribute("data-key", keyData.ru[index].value);
-          item.setAttribute("data-shift", keyData.ru[index].shift);
+  static downShift(pressed) {
+    // console.log('*** downShift Keyboard.pressShift = ', Keyboard.pressShift);
+    // const AllKey = this.keyboard.querySelectorAll(".keyboard .key");
+
+    const AllKey = document.querySelectorAll(".keyboard .key");
+    AllKey.forEach((item) => {
+      if (item.dataset.class == "input" && !Keyboard.arrow.includes(item.dataset.code)) {
+        // if (Keyboard.pressShift || Keyboard.pressCapsLock) {
+        switch (pressed) {
+          case 'pressShift':
+            if (Keyboard.pressShift) {
+              item.querySelector("span").textContent = item.dataset.shift;
+            } else if (!Keyboard.pressShift) {
+              item.querySelector("span").textContent = item.dataset.key;
+            }
+            break;
+          case 'pressCapsLock':
+            if (Keyboard.pressCapsLock) {
+              item.querySelector("span").textContent = item.dataset.shift;
+            } else if (!Keyboard.pressCapsLock) {
+              item.querySelector("span").textContent = item.dataset.key;
+            }
+            break;
         }
       }
     })
   }
+
+  static updateKeys(lang) {
+    let changKeys = document.querySelectorAll(".key");
+    console.log('lang = ', lang);
+    if (lang == "en") {
+      changKeys.forEach((item) => {
+        if (item.dataset.class == "input") {
+          const itemCode = item.dataset.code;
+          let index = keyData.en.findIndex(e => e.code === itemCode);
+          if (index !== -1) {
+            item.querySelector('span').textContent = keyData.en[index].value;
+            item.setAttribute("data-key", keyData.en[index].value);
+            item.setAttribute("data-shift", keyData.en[index].shift);
+          }
+        }
+      })
+    } else {
+      changKeys.forEach((item) => {
+        if (item.dataset.class == "input") {
+          const itemCode = item.dataset.code;
+          let index = keyData.ru.findIndex(e => e.code === itemCode);
+          if (index !== -1) {
+            item.querySelector('span').textContent = keyData.ru[index].value;
+            item.setAttribute("data-key", keyData.ru[index].value);
+            item.setAttribute("data-shift", keyData.ru[index].shift);
+          }
+        }
+      })
+    }
+  }
+  static lightKey(downkey1, downkey2) {
+    let allKeys = document.querySelectorAll(".key");
+    allKeys.forEach((item) => {
+      if (item.dataset.code == downkey1 || item.dataset.code == downkey2) {
+        item.classList.toggle("down-key");
+        return;
+      }
+    })
+  }
+  // ------------end of class---------
 }
 
-function lightKey(downkey1, downkey2) {
-  let allKeys = document.querySelectorAll(".key");
-  allKeys.forEach((item) => {
-    if (item.dataset.code == downkey1 || item.dataset.code == downkey2) {
-      item.classList.toggle("down-key");
-    }
-  })
-}
-
-function lightKey1(downkey) {
-  let allKeys = document.querySelectorAll(".key");
-  allKeys.forEach((item) => {
-    if (item.dataset.code == downkey && item.classList.contains("down-key")) {
-      // item.style.background = "#c9c3c3";
-      item.classList.remove("down-key");
-    } else if (item.dataset.code == downkey && !item.classList.contains("down-key")) {
-      // item.style.background = "#dbc607";
-      item.classList.add("down-key");
-    }
-  })
-}
 
 
 
@@ -315,14 +361,14 @@ window.addEventListener('resize', function (e) {
 });
 
 document.addEventListener("DOMContentLoaded", function () {
-  let board = new Keyboard();
-  console.log('board = ', board);
-  board.init();
-  board.activate();
-  size();
   let lang = localStorage.getItem('lang');
-  updateKeys(lang);
-  console.log('******* board.keyboard= ', board.keyboard);
+  let newBoard = new Keyboard();
+  newBoard.init();
+  Keyboard.updateKeys(lang);
+  newBoard.activate();
+  size();
+  console.log('******* newBoard = ', newBoard);
+  console.log('******* newBoard.keyboard= ', newBoard.keyboard);
 
 });
 

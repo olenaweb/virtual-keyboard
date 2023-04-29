@@ -35,6 +35,8 @@ h1 {
 }
 
 .write {
+  position: relative;
+  z-index: 1;
   margin: 0 auto 2rem;
   display: flex;
   justify-content: center;
@@ -45,7 +47,7 @@ h1 {
   text-align: left;
   /* overflow: hidden; */
   border-radius: 4px;
-  border: 1px solid rgba(204, 204, 204, 0.651);
+  border: 1px solid rgba(105, 101, 101, 0.651);
 }
 
 .output {
@@ -54,8 +56,10 @@ h1 {
   height: 100%;
   padding: 12px 20px;
   background-color: #f8f8f8;
-  font-size: 32px;
-  border: none;
+  font-size: 1.5rem;
+  /* border: none; */
+  border-radius: 4px;
+  border: 1px solid rgba(105, 101, 101, 0.651);
 }
 
 .keyboard {
@@ -118,30 +122,28 @@ h1 {
   cursor: pointer;
 }
 
+.key span {
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  vertical-align: middle;
+}
 
-.row0 .key:first-child,
-.row0 .key:last-child,
-.row1 .key:first-child,
-.row1 .key:last-child,
-.row2 .key:first-child,
-.row2 .key:last-child,
-.row3 .key:first-child,
-.row3 .key:last-child,
-.row4 .key:first-child,
-.row4 .key:nth-child(2),
-.row4 .key:nth-child(3),
-.row4 .key:nth-child(5),
-.row4 .key:nth-child(6),
-.row4 .key:nth-child(7),
-.row4 .key:nth-child(8),
-.row4 .key:last-child {
+.key span {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.keyboard .key[data-class="special"],
+.keyboard :is(.key[data-code="ArrowLeft"], .key[data-code="ArrowRight"], .key[data-code="ArrowUp"], .key[data-code="ArrowDown"]) {
   font-weight: 600;
   background: rgba(142, 139, 139, 0.68);
 }
 
-.keyboard-row .key:hover,
-.keyboard-row .key:active,
-.keyboard-row .key.active {
+.keyboard-row .key:hover {
   background: #7e96bb;
 }
 
@@ -153,11 +155,15 @@ h1 {
 /* .keyboard .keyboard-row>div[data-pressed], */
 .keyboard .keyboard-row .down-key,
 .keyboard .keyboard-row>div:active {
-  background: #dbc607;
-  color: #aaa;
-  /* position: relative; */
-  /* top: 0.5px; */
+  background: #deca16;
+  /* color: #aaa; */
+  position: relative;
+  top: 0.5px;
   box-shadow: 0 0 0 0.05em black;
+}
+
+.keyboard .keyboard-row .down-key {
+  background: #a5a070;
 }
 
 .repl {

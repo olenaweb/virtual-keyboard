@@ -10,25 +10,15 @@
 
 <body>
   <script>
-    let pressed = new Set();
-    document.addEventListener('keydown', function (event) {
-      pressed.add(event.code);
-      let codes = ["ControlLeft", "AltLeft"];
-      for (let code of codes) { // все ли клавиши из набора нажаты?
-        if (!pressed.has(code)) {
-          return;
-        }
+    class Car {
+      weight() {
+        alert('100kg');
       }
-      pressed.clear();
-      (function press() {
-        console.log('ControlLeft", "AltLeft" = ');
-      })();
-    });
-
-    document.addEventListener('keyup', function (event) {
-      pressed.delete(event.code);
-    });
-
+      getWeight() {
+        this.weight()   //не работает
+      }
+    }
+    (new Car()).getWeight();
   </script>
 </body>
 
