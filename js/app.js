@@ -40,7 +40,7 @@ class Keyboard {
     this.write.append(this.textArea);
 
     this.repl = document.createElement('p');
-    this.repl.innerHTML = `The keyboard was created in the "Windows" operating system, <br>to switch the keyboard language - left Ctrl + Alt on keyboard, <br>Win- on screen keyboard`;
+    this.repl.innerHTML = `The keyboard was created in the "Windows" operating system, <br>to switch the keyboard language press left Ctrl + Alt - on keyboard, <br>Win - on screen keyboard`;
     this.repl.classList.add("repl");
 
     this.keyboard = document.createElement('div');
@@ -88,15 +88,16 @@ class Keyboard {
     document.body.append(this.keyboard);
     document.body.append(this.repl);
     Keyboard.board = this.keyboard;
+
     // ------------Клавиатура---------------------------
-    // document.addEventListener('keydown', this.keyDown);
-    // document.addEventListener('keyup', this.keyUp);
     document.addEventListener('keydown', (event) => {
       this.keyDown(event);
     });
     document.addEventListener('keyup', (event) => {
       this.keyUp(event);
     });
+
+    // ----------Экранная клавиатура-------------------
     this.keyboard.addEventListener('mousedown', (event) => {
       let press = event.target.parentElement.dataset.key;
       switch (press) {
@@ -117,7 +118,6 @@ class Keyboard {
       }
     });
 
-    // ----------Экранная клавиатура-------------------
     this.keyboard.addEventListener('click', (event) => {
       this.keyClick(event);
     }, true);
@@ -192,9 +192,9 @@ class Keyboard {
       this.write.focus();
     });
 
-    this.textArea.addEventListener("keydown", function (event) {
-      if (event.code == "Enter") console.log('event.code == Enter');
-    })
+    // this.textArea.addEventListener("keydown", function (event) {
+    //   if (event.code == "Enter") console.log('event.code == Enter');
+    // })
 
   }
 
@@ -271,15 +271,16 @@ class Keyboard {
       // console.log(' SPAN event.target.parentElement.dataset.key=', event.target.parentElement.dataset.key);
       // console.log(' event.target.parentElement.classList.contains(input)= ', event.target.parentElement.dataset.class);
       if (event.target.parentElement.dataset.class == "input") {
-        // this.textArea.value = this.textArea.value + event.target.parentElement.dataset.key;
-        this.textArea.value = this.textArea.value + event.target.textContent;
+        // this.textArea.value = this.textArea.value + event.target.textContent;
+        this.fillOutput(event.target.textContent);
+
       } else if (event.target.parentElement.dataset.class == "special") {
         this.clickSpecial(event);
       }
     }
     // this.keyboard.blur(); // убрать фокус с клавиатуры
     // this.textArea.focus(); // фокус на клавиатуру
-    this.textArea.selectionStart = this.textArea.value.length; // курсор - за последний символ value
+    // this.textArea.selectionStart = this.textArea.value.length; 
   }
 
   clickSpecial(event) {
@@ -298,9 +299,66 @@ class Keyboard {
         console.log('clickSpecial=== Keyboard.pressCapsLock= ', Keyboard.pressCapsLock);
         Keyboard.downShift("pressCapsLock");
         return;
+      case "Tab":
+        this.fillOutput("Tab");
+        return;
+      case "Enter":
+        this.fillOutput("Enter");
+        return;
+      case "Del":
+        this.fillOutput("Del");
+        return;
+      case "Backspace":
+        this.fillOutput("Backspace");
+        return;
+      // default:
+      //   this.fillOutput(event.target.textContent);
+      //   break;
     };
-
   }
+
+  fillOutput(press) {
+    let outStr = this.textArea.value;
+    let posCursor = this.textArea.selectionStart;
+    let leftText = this.textArea.value.slice(0, posCursor);
+    let rightText = this.textArea.value.slice(posCursor);
+    let start, end;
+    switch (press) {
+      case "Tab":
+        outStr = `${leftText}\t${rightText}`;
+        posCursor += 8;
+        break;
+      case "Enter":
+        outStr = `${leftText}\n${rightText}`;
+        posCursor += 1;
+        break;
+      case "Backspace":
+        outStr = `${leftText.slice(0, -1)}${rightText}`;
+        posCursor -= 1;
+        break;
+      case "Del":
+        // -----удаление выделенной части------
+        start = this.textArea.selectionStart;
+        end = this.textArea.selectionEnd;
+        if (start != end && start != undefined && end != undefined) {
+          outStr = `${outStr.slice(0, start)}${outStr.slice(end)}`;
+          break;
+        }
+        // -----удаление одного символа справа
+        outStr = `${leftText}${rightText.slice(1)}`;
+        break;
+      // ----ввод символа экранной клавиатуры
+      default:
+        outStr = `${leftText}${press}${rightText}`;
+        posCursor += 1;
+        break;
+    }
+    this.textArea.value = outStr;
+    this.textArea.selectionStart = posCursor;
+    this.textArea.selectionEnd = posCursor;
+    // this.textArea.selectionStart = this.textArea.value.length; 
+  }
+
   mouseDown(event) {
     function pressKey(item) {
 
