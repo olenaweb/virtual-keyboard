@@ -214,9 +214,11 @@ class Keyboard {
     // ------------New Lang------------
     if ((event.code == "AltLeft" && event.ctrlKey) ||
       (event.code == "ControlLeft" && event.altKey)) {
+      let keyLang1 = Keyboard.board.querySelector(".keyboard .key[data-code=\"AltLeft\"]");
+      let keyLang2 = Keyboard.board.querySelector(".keyboard .key[data-code=\"ControlLeft\"]");
       this.setLanguage();
-      Keyboard.lightKey("ControlLeft");
-      Keyboard.lightKey("AltLeft");
+      keyLang1.style.background = "#deca16";
+      keyLang2.style.background = "#deca16";
     } else {
       Keyboard.lightKey(event.code);
     }
@@ -242,9 +244,10 @@ class Keyboard {
 
     if ((event.code == "AltLeft" && event.ctrlKey) ||
       (event.code == "ControlLeft" && event.altKey)) {
-
-      Keyboard.lightKey("ControlLeft");
-      Keyboard.lightKey("AltLeft");
+      let keyLang1 = Keyboard.board.querySelector(".keyboard .key[data-code=\"AltLeft\"]");
+      let keyLang2 = Keyboard.board.querySelector(".keyboard .key[data-code=\"ControlLeft\"]");
+      keyLang1.style.removeProperty('background');
+      keyLang2.style.removeProperty('background');
     } else {
       if (event.code != 'CapsLock') {
         Keyboard.lightKey(event.code);
@@ -268,8 +271,6 @@ class Keyboard {
     const pressKey = event.target.tagName;
     if (pressKey != "SPAN") { return };
     if (pressKey == "SPAN" && event.target.parentElement.dataset.key != undefined) {
-      // console.log(' SPAN event.target.parentElement.dataset.key=', event.target.parentElement.dataset.key);
-      // console.log(' event.target.parentElement.classList.contains(input)= ', event.target.parentElement.dataset.class);
       if (event.target.parentElement.dataset.class == "input") {
         // this.textArea.value = this.textArea.value + event.target.textContent;
         this.fillOutput(event.target.textContent);
@@ -389,7 +390,6 @@ class Keyboard {
     const AllKey = document.querySelectorAll(".keyboard .key");
     AllKey.forEach((item) => {
       if (item.dataset.class == "input" && !Keyboard.arrow.includes(item.dataset.code)) {
-        // if (Keyboard.pressShift || Keyboard.pressCapsLock) {
         switch (pressed) {
           case 'pressShift':
             if (Keyboard.pressShift) {
@@ -473,13 +473,13 @@ document.addEventListener("DOMContentLoaded", function () {
 function size() {
   const keyboard = document.querySelector('.keyboard');
   let size = keyboard.parentNode.clientWidth / 60 + 7;
+  keyboard.style.fontSize = size + 'px';
   // console.log('size = ', size);
   // console.log('keyboard.parentNode.clientWidth = ', keyboard.parentNode.clientWidth);
   let rowsColSpecial = document.querySelectorAll(".keyboard .key[data-class=\"special\"]");
   rowsColSpecial.forEach((item) => {
     item.style.fontSize = size / 2 + 'px';
   })
-  keyboard.style.fontSize = size + 'px';
   let row0FirstCol = document.querySelector(".row0 .key:first-child");
   row0FirstCol.style.fontSize = size + 'px';
 }

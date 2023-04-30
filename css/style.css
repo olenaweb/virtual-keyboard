@@ -140,14 +140,15 @@ h1 {
 .keyboard .key[data-class="special"],
 .keyboard :is(.key[data-code="ArrowLeft"], .key[data-code="ArrowRight"], .key[data-code="ArrowUp"], .key[data-code="ArrowDown"]) {
   font-weight: 600;
-  background: rgba(142, 139, 139, 0.68);
+  /* background: rgba(142, 139, 139, 0.68); */
+  background: #a5a6a8;
 }
 
 .keyboard-row .key:hover {
   background: #7e96bb;
 }
 
-.key.key:active {
+.key .key:active {
   box-shadow: inset 2px 2px 4px rgba(0, 0, 0, 0.5), 0px 0px 0px rgba(0, 0, 0, 0.5);
   background: #6488be;
 }
