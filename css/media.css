@@ -7,11 +7,8 @@
     margin: 0 auto 2rem;
     width: 60%;
     height: 25vh;
+    /* font-size: 1.2rem; */
 
-  }
-
-  .output {
-    font-size: 1.2rem;
   }
 
   .keyboard {
@@ -38,10 +35,7 @@
     margin: 0 auto 2rem;
     width: 80%;
     height: 25vh;
-  }
-
-  .output {
-    font-size: 1.5rem;
+    /* font-size: 1.5rem; */
   }
 
   .keyboard {
