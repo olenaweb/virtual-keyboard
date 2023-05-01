@@ -47,6 +47,7 @@ h1 {
   border-radius: 4px;
   border: 1px solid rgba(105, 101, 101, 0.651);
   /* font-size: 1.5rem; */
+  /* font-size: 1.2rem; */
 }
 
 .output,
@@ -61,7 +62,6 @@ h1 {
   border: 1px solid rgba(105, 101, 101, 0.651);
   user-select: text;
   outline: none;
-  font-size: 1.2rem;
 }
 
 .keyboard {

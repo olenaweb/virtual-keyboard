@@ -184,12 +184,16 @@ class Keyboard {
     // Клавиатура
     if (event.repeat) { return };
     if (event.type === 'keydown') { event.preventDefault() };
+    event.stopImmediatePropagation();
 
     // console.log(' *********keyDown**********');
     // console.log('event=', event);
     // console.log('event.type=', event.type);
     // console.log('event.key=', event.key);
     // console.log('event.code=', event.code);
+    if (event.ctrlKey && event.code == "KeyC") {
+      return;
+    }
 
     let switchLang = (event.code == "AltLeft" && event.ctrlKey) ||
       (event.code == "ControlLeft" && event.altKey);
@@ -302,11 +306,11 @@ class Keyboard {
     let press = event.target.parentElement.dataset.key;
     // console.log('event.target.parentElement.dataset.key= ', event.target.parentElement.dataset.key);
     // console.log('event.target.parentElement.dataset.code= ', event.target.parentElement.dataset.code);
+    // console.log(' press = ', press);
 
-    console.log(' press = ', press);
     switch (press) {
       case "Win":
-        console.log('====clickSpecial  Win"= ');
+        // console.log('====clickSpecial  Win"= ');
         this.setLanguage();
         Keyboard.lightKey(event.code);
         Keyboard.lightKey(event.code);
@@ -314,7 +318,7 @@ class Keyboard {
 
       case "CapsLock":
         Keyboard.pressCapsLock = !Keyboard.pressCapsLock;
-        console.log('clickSpecial=== Keyboard.pressCapsLock= ', Keyboard.pressCapsLock);
+        // console.log('clickSpecial=== Keyboard.pressCapsLock= ', Keyboard.pressCapsLock);
         Keyboard.downShift("pressCapsLock");
         return;
       case "Tab":
@@ -457,8 +461,11 @@ class Keyboard {
   }
   static size() {
     const keyboard = document.querySelector('.keyboard');
+    const output = document.querySelector(".output");
     let size = keyboard.parentNode.clientWidth / 60 + 7;
+    let sizeOutput = size / 1.2;
     keyboard.style.fontSize = size + 'px';
+    output.style.fontSize = sizeOutput + 'px';
     let rowsColSpecial = document.querySelectorAll(".keyboard .key[data-class=\"special\"]");
     rowsColSpecial.forEach((item) => {
       item.style.fontSize = size / 2 + 'px';
