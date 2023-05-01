@@ -170,7 +170,7 @@ const keyData = {
     },
     {
       code: 'Delete',
-      value: 'Del',
+      value: 'Delete',
       shift: null,
       row: 1,
     },
@@ -556,7 +556,7 @@ const keyData = {
     },
     {
       code: 'Delete',
-      value: 'Del',
+      value: 'Delete',
       shift: null,
       row: 1,
     },
