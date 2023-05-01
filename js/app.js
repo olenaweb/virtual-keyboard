@@ -2,15 +2,9 @@
 "use strict"
 
 import keyData from './keyData.js';
-console.log(' keyData= ', keyData);
-// console.log('keyData.en[0] = ', keyData.en[0], keyData.en[0].code);
-// keyData.en.forEach((item, i) => {
-//   console.log('item i= ', i, item);
-// })
+// console.log(' keyData= ', keyData);
 class Keyboard {
   language = 'ru';
-  // pressControl = false;
-  // pressAlt = false;
   keyboard = {};
   textArea = {};
   static board = {};
@@ -122,9 +116,6 @@ class Keyboard {
       this.keyClick(event);
     }, true);
 
-    // console.log('***********this.keyboard = ', this.keyboard);
-    // console.log('********this.textArea = ', this.textArea);
-
   }
 
   addRow(keys) {
@@ -183,53 +174,51 @@ class Keyboard {
   }
 
   areaFocus() {
-
     this.write.focus();
     this.write.addEventListener('blur', () => {
       this.write.focus();
     });
-
-    // this.textArea.addEventListener("keydown", function (event) {
-    //   if (event.code == "Enter") console.log('event.code == Enter');
-    // })
-
   }
 
   keyDown(event) {
     // Клавиатура
-    if (event.repeat) return;
-    if (event.type === 'keydown') event.preventDefault();
+    if (event.repeat) { return };
+    if (event.type === 'keydown') { event.preventDefault() };
 
-    console.log(' *********keyDown**********');
-    console.log('event=', event);
-    console.log('event.type=', event.type);
-    console.log('event.key=', event.key);
-    console.log('event.code=', event.code);
+    // console.log(' *********keyDown**********');
+    // console.log('event=', event);
+    // console.log('event.type=', event.type);
+    // console.log('event.key=', event.key);
+    // console.log('event.code=', event.code);
 
     let switchLang = (event.code == "AltLeft" && event.ctrlKey) ||
       (event.code == "ControlLeft" && event.altKey);
-    console.log('switchLang = ', switchLang);
+    // console.log('switchLang = ', switchLang);
     // ------------New Lang------------
-    // if ((event.code == "AltLeft" && event.ctrlKey) ||
-    //   (event.code == "ControlLeft" && event.altKey))
     if (switchLang) {
       let keyLang1 = Keyboard.board.querySelector(".keyboard .key[data-code=\"AltLeft\"]");
       let keyLang2 = Keyboard.board.querySelector(".keyboard .key[data-code=\"ControlLeft\"]");
       keyLang1.style.background = "#deca16";
       keyLang2.style.background = "#deca16";
       this.setLanguage();
-      return;
     } else {
       Keyboard.lightKey(event.code);
     }
 
-    // ----клавиша на экранной клавиатуре----
-    let screenKey = this.isKey(event.code);
-    console.log('screenKey = ', screenKey);
-    if (screenKey.dataset.class == "input") {
-      this.fillOutput(screenKey.querySelector("span").textContent);
-      return;
+    // ---------Shift----------
+    if (event.key == 'Shift') {
+      Keyboard.pressShift = true;
+      Keyboard.downShift("pressShift");
     }
+    //--------CapsLock---------
+    if (event.key == 'CapsLock') {
+      Keyboard.pressCapsLock = !Keyboard.pressCapsLock;
+      Keyboard.downShift("pressCapsLock");
+    }
+
+    let screenKey = this.isKey(event.code);
+    const element = this.keyboard.querySelector(`[data-code=${event.code}]`);
+    if (!element) return;
 
     if (screenKey.dataset.class == "special" &&
       (event.key != 'Shift' &&
@@ -237,25 +226,13 @@ class Keyboard {
         event.key != 'Control' &&
         event.key != 'Alt')
     ) {
-
-      console.log('@@@@@@@@@@@@@@@@@@@@ special @@@@@@@@@ = ');
-      console.log(' event.key= ', event.key);
       this.fillOutput(screenKey.dataset.code);
-      return;
     }
 
-    // ---------Shift----------
-    if (event.key == 'Shift') {
-      Keyboard.pressShift = true;
-      Keyboard.downShift("pressShift");
-      return;
-    }
-    //--------CapsLock---------
-    if (event.key == 'CapsLock') {
-      Keyboard.pressCapsLock = !Keyboard.pressCapsLock;
-      console.log('========== Keyboard.pressCapsLock= ', Keyboard.pressCapsLock);
-      Keyboard.downShift("pressCapsLock");
-      return;
+    // ----клавиша на экранной клавиатуре----
+    // console.log('screenKey = ', screenKey);
+    if (screenKey.dataset.class == "input") {
+      this.fillOutput(screenKey.querySelector("span").textContent);
     }
   }
 
@@ -263,10 +240,7 @@ class Keyboard {
     let allKeys = this.keyboard.querySelectorAll(".key");
     let findKey;
     allKeys.forEach((item) => {
-      // console.log('item.dataset.code = ', item.dataset.code);
       if (item.dataset.code == downkey) {
-        // console.log('!!!!!!!! item.dataset.code = ', item.dataset.code);
-        // console.log('!!!!!!!! item= ', item);
         findKey = item;
       }
     })
@@ -274,14 +248,12 @@ class Keyboard {
   }
 
   keyUp(event) {
-    if (event.repeat) return;
-    console.log(' *********keyUP**********');
-    console.log('event=', event);
-    console.log('event.type=', event.type);
+    if (event.repeat) { return };
+    // console.log(' *********keyUP**********');
+    // console.log('event=', event);
+    // console.log('event.type=', event.type);
     let switchLang = (event.code == "AltLeft" && event.ctrlKey) ||
       (event.code == "ControlLeft" && event.altKey);
-    // let switchLang = (event.code == "ControlLeft" && event.altKey);
-    console.log(' switchLang= ', switchLang);
 
     if (switchLang) {
       let keyLang1 = Keyboard.board.querySelector(".keyboard .key[data-code=\"AltLeft\"]");
@@ -302,31 +274,35 @@ class Keyboard {
 
   keyClick(event) {
     if (event.repeat) return;
-    console.log(' *********keyClick**********');
-    console.log(' ****keyClick event= ', event);
-    console.log(event.type);
-    console.log('event.target.parentElement.dataset.key = ', event.target.parentElement.dataset.key);
+    if (event.type != "click") return;
+    // console.log(' *********keyClick**********');
+    // console.log(' ****keyClick event= ', event);
+    // console.log(event.type);
+    // console.log('event.target.parentElement.dataset.key = ', event.target.parentElement.dataset.key);
 
     event.stopImmediatePropagation();
-    if (event.target.tagName != 'SPAN') { return };
+    if (event.target.tagName != "SPAN") { return };
     const pressKey = event.target.tagName;
     if (pressKey != "SPAN") { return };
+
     if (pressKey == "SPAN" && event.target.parentElement.dataset.key != undefined) {
       if (event.target.parentElement.dataset.class == "input") {
-        // this.textArea.value = this.textArea.value + event.target.textContent;
         this.fillOutput(event.target.textContent);
-
       } else if (event.target.parentElement.dataset.class == "special") {
         this.clickSpecial(event);
       }
+
     }
-    // this.keyboard.blur(); // убрать фокус с клавиатуры
-    // this.textArea.focus(); // фокус на клавиатуру
+    this.keyboard.blur(); // убрать фокус с клавиатуры
+    this.textArea.focus(); // фокус на клавиатуру
     // this.textArea.selectionStart = this.textArea.value.length; 
   }
 
   clickSpecial(event) {
     let press = event.target.parentElement.dataset.key;
+    // console.log('event.target.parentElement.dataset.key= ', event.target.parentElement.dataset.key);
+    // console.log('event.target.parentElement.dataset.code= ', event.target.parentElement.dataset.code);
+
     console.log(' press = ', press);
     switch (press) {
       case "Win":
@@ -356,9 +332,6 @@ class Keyboard {
       case " ":
         this.fillOutput("Space");
         return;
-      // default:
-      //   this.fillOutput(event.target.textContent);
-      //   break;
     };
   }
 
@@ -398,6 +371,7 @@ class Keyboard {
         break;
       // ----ввод символа экранной клавиатуры
       default:
+        // console.log('fillOutput press = ', press);
         outStr = `${leftText}${press}${rightText}`;
         posCursor += 1;
         break;
@@ -409,7 +383,6 @@ class Keyboard {
   }
 
   setLanguage() {
-    console.log('====setLanguage = ', this.language);
     if (this.language == 'en') {
       this.language = 'ru'
     } else {
@@ -421,9 +394,6 @@ class Keyboard {
   }
 
   static downShift(pressed) {
-    // console.log('*** downShift Keyboard.pressShift = ', Keyboard.pressShift);
-    // const AllKey = this.keyboard.querySelectorAll(".keyboard .key");
-
     const AllKey = document.querySelectorAll(".keyboard .key");
     AllKey.forEach((item) => {
       if (item.dataset.class == "input" && !Keyboard.arrow.includes(item.dataset.code)) {
@@ -449,7 +419,7 @@ class Keyboard {
 
   static updateKeys(lang) {
     let changKeys = document.querySelectorAll(".key");
-    console.log('lang = ', lang);
+    // console.log('lang = ', lang);
     if (lang == "en") {
       changKeys.forEach((item) => {
         if (item.dataset.class == "input") {
@@ -489,8 +459,6 @@ class Keyboard {
     const keyboard = document.querySelector('.keyboard');
     let size = keyboard.parentNode.clientWidth / 60 + 7;
     keyboard.style.fontSize = size + 'px';
-    // console.log('size = ', size);
-    // console.log('keyboard.parentNode.clientWidth = ', keyboard.parentNode.clientWidth);
     let rowsColSpecial = document.querySelectorAll(".keyboard .key[data-class=\"special\"]");
     rowsColSpecial.forEach((item) => {
       item.style.fontSize = size / 2 + 'px';
@@ -501,9 +469,6 @@ class Keyboard {
   // ------------end of class---------
 }
 
-
-
-
 window.addEventListener('resize', function (e) {
   Keyboard.size();
 });
@@ -513,10 +478,8 @@ document.addEventListener("DOMContentLoaded", function () {
   let newBoard = new Keyboard();
   newBoard.init();
   Keyboard.updateKeys(lang);
-  // newBoard.areaFocus();
+  newBoard.areaFocus();
   Keyboard.size();
-  // console.log('******* newBoard = ', newBoard);
-  // console.log('******* newBoard.keyboard= ', newBoard.keyboard);
 
 });
 
