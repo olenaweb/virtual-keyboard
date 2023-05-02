@@ -2,9 +2,8 @@
 "use strict"
 
 import keyData from './keyData.js';
-// console.log(' keyData= ', keyData);
 class Keyboard {
-  language = 'ru';
+  language = 'en';
   keyboard = {};
   textArea = {};
   static board = {};
@@ -94,7 +93,6 @@ class Keyboard {
     // ----------Экранная клавиатура-------------------
     this.keyboard.addEventListener('mousedown', (event) => {
       let press = event.target.parentElement.dataset.key;
-      console.log('mousedown = ', press);
       switch (press) {
         case "Shift":
           Keyboard.pressShift = true;
@@ -108,15 +106,11 @@ class Keyboard {
 
     this.keyboard.addEventListener('mouseup', (event) => {
       let press = event.target.parentElement.dataset.key;
-      console.log('mouseup = ', press);
-
       switch (press) {
         case "Shift":
           Keyboard.pressShift = false;
           Keyboard.downShift("pressShift");
           return;
-        // case "CapsLock":
-        //   return;
       }
     });
 
@@ -202,10 +196,13 @@ class Keyboard {
     if (event.ctrlKey && event.code == "KeyC") {
       return;
     }
+    if (event.code == "MetaLeft") {
+      return;
+    }
+
 
     let switchLang = (event.code == "AltLeft" && event.ctrlKey) ||
       (event.code == "ControlLeft" && event.altKey);
-    // console.log('switchLang = ', switchLang);
     // ------------New Lang------------
     if (switchLang) {
       let keyLang1 = Keyboard.board.querySelector(".keyboard .key[data-code=\"AltLeft\"]");
@@ -242,7 +239,6 @@ class Keyboard {
     }
 
     // ----клавиша на экранной клавиатуре----
-    // console.log('screenKey = ', screenKey);
     if (screenKey.dataset.class == "input") {
       this.fillOutput(screenKey.querySelector("span").textContent);
     }
@@ -265,6 +261,9 @@ class Keyboard {
     // console.log('event=', event);
     // console.log('event.type=', event.type);
     if (event.ctrlKey && event.code == "KeyC") {
+      return;
+    }
+    if (event.code == "MetaLeft") {
       return;
     }
     let switchLang = (event.code == "AltLeft" && event.ctrlKey) ||
@@ -294,7 +293,6 @@ class Keyboard {
     // console.log(' *********keyClick**********');
     // console.log(' ****keyClick event= ', event);
     // console.log(event.type);
-    // console.log('event.target.parentElement.dataset.key = ', event.target.parentElement.dataset.key);
 
     event.stopImmediatePropagation();
     if (event.target.tagName != "SPAN") { return };
@@ -316,13 +314,9 @@ class Keyboard {
 
   clickSpecial(event) {
     let press = event.target.parentElement.dataset.key;
-    // console.log('event.target.parentElement.dataset.key= ', event.target.parentElement.dataset.key);
-    // console.log('event.target.parentElement.dataset.code= ', event.target.parentElement.dataset.code);
-    // console.log(' press = ', press);
 
     switch (press) {
       case "Win":
-        // console.log('====clickSpecial  Win"= ');
         this.setLanguage();
         Keyboard.lightKey(event.code);
         Keyboard.lightKey(event.code);
@@ -330,7 +324,6 @@ class Keyboard {
 
       case "CapsLock":
         Keyboard.pressCapsLock = !Keyboard.pressCapsLock;
-        // console.log('clickSpecial=== Keyboard.pressCapsLock= ', Keyboard.pressCapsLock);
         Keyboard.downShift("pressCapsLock");
         return;
       case "Tab":
@@ -385,9 +378,8 @@ class Keyboard {
         outStr = leftText + " " + rightText;
         posCursor += 1;
         break;
-      // ----ввод символа экранной клавиатуры
       default:
-        // console.log('fillOutput press = ', press);
+        // ----ввод символа экранной клавиатуры
         outStr = `${leftText}${press}${rightText}`;
         posCursor += 1;
         break;
@@ -435,7 +427,6 @@ class Keyboard {
 
   static updateKeys(lang) {
     let changKeys = document.querySelectorAll(".key");
-    // console.log('lang = ', lang);
     if (lang == "en") {
       changKeys.forEach((item) => {
         if (item.dataset.class == "input") {
