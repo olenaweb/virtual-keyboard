@@ -404,6 +404,10 @@ class Keyboard {
     localStorage.setItem("lang", this.language);
     // ----------Смена раскладки клавиатуры------
     Keyboard.updateKeys(this.language);
+    if (Keyboard.pressCapsLock === true) {
+      Keyboard.lightKey("CapsLock");
+      Keyboard.pressCapsLock = false;
+    }
   }
 
   static downShift(pressed) {
