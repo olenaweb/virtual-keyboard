@@ -94,21 +94,29 @@ class Keyboard {
     // ----------Экранная клавиатура-------------------
     this.keyboard.addEventListener('mousedown', (event) => {
       let press = event.target.parentElement.dataset.key;
+      console.log('mousedown = ', press);
       switch (press) {
         case "Shift":
           Keyboard.pressShift = true;
           Keyboard.downShift("pressShift");
+          return;
+        case "CapsLock":
+          Keyboard.lightKey("CapsLock");
           return;
       }
     });
 
     this.keyboard.addEventListener('mouseup', (event) => {
       let press = event.target.parentElement.dataset.key;
+      console.log('mouseup = ', press);
+
       switch (press) {
         case "Shift":
           Keyboard.pressShift = false;
           Keyboard.downShift("pressShift");
           return;
+        // case "CapsLock":
+        //   return;
       }
     });
 
