@@ -256,6 +256,9 @@ class Keyboard {
     // console.log(' *********keyUP**********');
     // console.log('event=', event);
     // console.log('event.type=', event.type);
+    if (event.ctrlKey && event.code == "KeyC") {
+      return;
+    }
     let switchLang = (event.code == "AltLeft" && event.ctrlKey) ||
       (event.code == "ControlLeft" && event.altKey);
 
@@ -279,6 +282,7 @@ class Keyboard {
   keyClick(event) {
     if (event.repeat) return;
     if (event.type != "click") return;
+
     // console.log(' *********keyClick**********');
     // console.log(' ****keyClick event= ', event);
     // console.log(event.type);
