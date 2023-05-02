@@ -427,6 +427,7 @@ class Keyboard {
 
   static updateKeys(lang) {
     let changKeys = document.querySelectorAll(".key");
+    if (lang == undefined) { lang = 'en'; }
     if (lang == "en") {
       changKeys.forEach((item) => {
         if (item.dataset.class == "input") {
