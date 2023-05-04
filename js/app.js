@@ -392,7 +392,7 @@ class Keyboard {
     this.textArea.value = outStr;
     this.textArea.selectionStart = posCursor;
     this.textArea.selectionEnd = posCursor;
-    // this.textArea.selectionStart = this.textArea.value.length;
+    // this.textarea.scrollTop = this.textarea.scrollHeight;
   }
 
   setLanguage() {
