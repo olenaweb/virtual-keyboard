@@ -1,0 +1,58 @@
+@media screen and (max-width: 1400px) {
+  html {
+    font-size: 14px;
+  }
+
+  .write {
+    margin: 0 auto 2rem;
+    width: 60%;
+    height: 25vh;
+    /* font-size: 1.2rem; */
+
+  }
+
+  .keyboard {
+    column-gap: 0.5rem;
+    width: 60%;
+  }
+
+  .keyboard-row {
+    height: 1.5em;
+    margin: 0.2em;
+  }
+}
+
+@media screen and (max-width: 850px) {
+  html {
+    font-size: 12px;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  .write {
+    margin: 0 auto 2rem;
+    width: 80%;
+    height: 25vh;
+    /* font-size: 1.5rem; */
+  }
+
+  .keyboard {
+    column-gap: 0.5rem;
+    width: 90%;
+  }
+
+  .keyboard-row {
+    height: 1.5em;
+    margin: 0.2em;
+  }
+
+  .key {
+    margin: 0 2px 0;
+  }
+
+  .repl {
+    font-size: 1rem;
+  }
+}
