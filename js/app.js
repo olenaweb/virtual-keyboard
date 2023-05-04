@@ -7,6 +7,8 @@ class Keyboard {
 
   textArea = {};
 
+  keyup = false;
+
   static board = {};
 
   static pressShift = false;
@@ -247,6 +249,8 @@ class Keyboard {
     if (screenKey.dataset.class === "input") {
       this.fillOutput(screenKey.querySelector("span").textContent);
     }
+
+    this.keyup = false;
   }
 
   isKey(downkey) {
@@ -287,6 +291,7 @@ class Keyboard {
       Keyboard.pressShift = false;
       Keyboard.downShift("pressShift");
     }
+    this.keyup = true;
   }
 
   keyClick(event) {
